@@ -1,5 +1,5 @@
 # Meow
-Meow is a prototype-based object oriented (OOP) scripting language that designed to be easy to integrate, It is an interpreted language with static-typing, built with C#.
+Meow is a prototype-based object oriented (OOP) scripting language that designed to be easy to integrate and embed, It is an interpreted language with static-typing, built with C#.
 It takes alot of inspiration from typescript, and lua(u).
 This is very much still work-in-progress, this is just a hobby project for me currently.
 You mostly write the lang in camelCase, functions and objects are in PascalCase.
