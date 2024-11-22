@@ -3,6 +3,7 @@ Meow is a prototype-based object oriented (OOP) scripting language that designed
 It takes alot of inspiration from typescript, and lua(u).
 This is very much still work-in-progress, this is just a hobby project for me currently.
 You mostly write the lang in camelCase, functions and objects are in PascalCase.
+This language will be capable of running in AOT/Il2CPP.
 
 Here's an example of how the syntax will look (bound to change)
 

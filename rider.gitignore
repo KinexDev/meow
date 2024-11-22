@@ -1,0 +1,38 @@
+# JetBrains Rider specific files
+.idea/
+
+# User-specific files
+.idea/*
+
+# JetBrains project-specific files
+.idea/*.iml
+.idea/modules.xml
+.idea/.name
+
+# User-specific configuration files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/gradle.xml
+
+# JetBrains IDE system folders
+.idea/.idea_modules/
+
+# Temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# OS-specific files
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+*~

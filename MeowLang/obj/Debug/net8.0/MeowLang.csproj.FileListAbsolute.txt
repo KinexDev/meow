@@ -1,0 +1,15 @@
+D:\RiderProjects\MeowLang\MeowLang\bin\Debug\net8.0\MeowLang.exe
+D:\RiderProjects\MeowLang\MeowLang\bin\Debug\net8.0\MeowLang.deps.json
+D:\RiderProjects\MeowLang\MeowLang\bin\Debug\net8.0\MeowLang.runtimeconfig.json
+D:\RiderProjects\MeowLang\MeowLang\bin\Debug\net8.0\MeowLang.dll
+D:\RiderProjects\MeowLang\MeowLang\bin\Debug\net8.0\MeowLang.pdb
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.GeneratedMSBuildEditorConfig.editorconfig
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.AssemblyInfoInputs.cache
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.AssemblyInfo.cs
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.csproj.CoreCompileInputs.cache
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.dll
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\refint\MeowLang.dll
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.pdb
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.genruntimeconfig.cache
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\ref\MeowLang.dll
+D:\RiderProjects\MeowLang\MeowLang\obj\Debug\net8.0\MeowLang.sourcelink.json
