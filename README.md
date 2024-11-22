@@ -7,7 +7,6 @@ You mostly write the lang in camelCase, functions and object are in PascalCase.
 Here's an example of how the syntax will look (bound to change)
 
 ```
-
 var x = 42 // Initalizes a variable with type inference
 var y : int = 42 // Initalizes a variable with type annotations
 
