@@ -1,23 +1,25 @@
-﻿namespace MeowLang.Internal.Lexer;
+﻿namespace MeowLang.Internal.Tokenizer;
 
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-public static class Lexer
+public static class Tokenizer
 {
+    // i'll switch to a manual tokenizer soon, but regex is good enough for testing.
     public static void FindTokens(string code, out Token[] tokens)
     {
-        tokens = [];
+        List<Token> tokenList = new List<Token>();
 
         string pattern = @"(?<Number>\d+(\.\d+)?)" +
                          @"|(?<Comment>//.*?(?:\r?\n|$))" +
                          @"|(?<Operator>[+\-*|])" +
-                         @"|(?<Keyword>if|function|while|null)" +
+                         "|(?<Keyword>if|function|while|null)" +
                          "|(?<Terminator>[;])" +
                          "|(?<Punctuation>[(){}.,;:])" +
                          @"|(?<Identifier>\b\w+\b)" +
-                         @"|(?<String>""[^""]*"")";
+                         """|(?<String>"[^"]*")""" +
+                         "|(?<EOL>\n)";
 
         
         foreach (Match match in Regex.Matches(code, pattern, RegexOptions.Singleline))
@@ -28,17 +30,29 @@ public static class Lexer
 
                 if (match.Groups[tokenName].Success)
                 {
-                    Array.Resize(ref tokens, tokens.Length + 1);
-                    
                     if (Enum.TryParse(tokenName, out TokenType tokenType))
                     {
-                        tokens[^1] = new Token(
+                        if (tokenType == TokenType.EOL)
+                        {
+                            tokenList.Add(new Token(
+                                TokenType.EOL));
+                            break;
+                        }
+                        
+                        tokenList.Add(new Token(
                             tokenType, 
-                            match.Value);
+                            match.Value));
                     }
                     break;
                 }
             }
         }
+        
+        tokenList.Add(new Token(
+            TokenType.EOL));
+        
+        tokens = tokenList.ToArray();
     }
+    
+    
 }

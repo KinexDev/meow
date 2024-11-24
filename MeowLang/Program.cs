@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using MeowLang.Internal.Lexer;
+using MeowLang.Internal.Tokenizer;
 
 namespace MeowLang;
 
@@ -7,7 +7,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        Lexer.FindTokens("print(\"Hello world!\")", out Token[] tokenList);
+        string? filePath = Directory.GetCurrentDirectory() + "/Test.meow";
+        
+        Tokenizer.FindTokens(File.ReadAllText(filePath), out Token[] tokenList);
         
         /*
         this returns 
@@ -18,6 +20,7 @@ class Program
         
         i'll set up an ast soon
         */
+        
         foreach (var token in tokenList)
         {
             Console.WriteLine($"{token.tokenType} : {token.value}");
