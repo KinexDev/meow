@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using MeowLang.Internal.Parser;
 using MeowLang.Internal.Tokenizer;
 
 namespace MeowLang;
@@ -10,7 +11,8 @@ class Program
         string? filePath = Directory.GetCurrentDirectory() + "/Test.meow";
         
         Tokenizer.FindTokens(File.ReadAllText(filePath), out Token[] tokenList);
-        
+        var x = Parser.Parse(tokenList);
+        Console.WriteLine(Parser.Evaluate(x));
         /*
         this returns 
         Identifier : print

@@ -15,6 +15,7 @@ public static class Tokenizer
                          @"|(?<Comment>//.*?(?:\r?\n|$))" +
                          @"|(?<Operator>[+\-*|])" +
                          "|(?<Keyword>if|function|while|null)" +
+                         "|(?<Bracket>[()])" +
                          "|(?<Terminator>[;])" +
                          "|(?<Punctuation>[(){}.,;:])" +
                          @"|(?<Identifier>\b\w+\b)" +

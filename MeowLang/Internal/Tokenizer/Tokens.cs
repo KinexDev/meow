@@ -5,6 +5,7 @@ public enum TokenType
     Number,
     Comment,
     Operator,
+    Bracket,
     Terminator,
     Punctuation,
     Identifier,
