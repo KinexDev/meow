@@ -169,6 +169,12 @@ namespace MeowLang.Internal.Parser
                         break;
                 }
             }
+
+
+            if (dispatch.Count != 0)
+            {
+                throw new ArgumentException($"Code not ended at {dispatch[0].name}");
+            }
             return nodeCurrentlyIn;
         }
 
@@ -178,9 +184,11 @@ namespace MeowLang.Internal.Parser
             switch (operatorToken)
             {
                 case "+":
+                    return 1;
                 case "-":
                     return 1;
                 case "*":
+                    return 2;
                 case "/":
                     return 2;
                 case "(":

@@ -13,7 +13,7 @@ public static class Tokenizer
 
         string pattern = @"(?<Number>\d+(\.\d+)?)" +
                          @"|(?<Comment>//.*?(?:\r?\n|$))" +
-                         @"|(?<Operator>[+\-*|])" +
+                         @"|(?<Operator>[+\-*|/])" +
                          "|(?<Keyword>if|function|while|null)" +
                          "|(?<Bracket>[()])" +
                          "|(?<Terminator>[;])" +
