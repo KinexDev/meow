@@ -11,23 +11,26 @@ public enum TokenType
     Identifier,
     String,
     Keyword,
-    EOL
+    Eol
 }
 
 public class Token
 {
-    public TokenType tokenType { get; }
-    public string value { get; }
+    public TokenType TokenType { get; }
+    public string Value { get; }
+    public ushort Line { get; set; }
 
-    public Token(TokenType tokenType, string value)
+    public Token(TokenType tokenType, string value, ushort line)
     {
-        this.tokenType = tokenType;
-        this.value = value;
+        this.TokenType = tokenType;
+        this.Value = value;
+        this.Line = line;
     }
     
-    public Token(TokenType tokenType)
+    public Token(TokenType tokenType, ushort line)
     {
-        this.tokenType = tokenType;
+        this.TokenType = tokenType;
+        this.Line = line;
     }
 }
 

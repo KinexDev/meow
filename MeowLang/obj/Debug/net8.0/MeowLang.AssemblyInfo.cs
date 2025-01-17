@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MeowLang")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+05675e4089d2d685e441306ba9a6a52d2ce90fa0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29c256d95d3ca8d2b620400207f490b3bb165de3")]
 [assembly: System.Reflection.AssemblyProductAttribute("MeowLang")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MeowLang")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

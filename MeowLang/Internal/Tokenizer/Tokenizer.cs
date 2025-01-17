@@ -23,6 +23,8 @@ public static class Tokenizer
                          "|(?<EOL>\n)";
 
         
+        int lineNum = 0;
+        
         foreach (Match match in Regex.Matches(code, pattern, RegexOptions.Singleline))
         {
             foreach (var tokenName in Enum.GetNames(typeof(TokenType)))
@@ -33,24 +35,27 @@ public static class Tokenizer
                 {
                     if (Enum.TryParse(tokenName, out TokenType tokenType))
                     {
-                        if (tokenType == TokenType.EOL)
+                        if (tokenType == TokenType.Eol)
                         {
+                            lineNum++;
                             tokenList.Add(new Token(
-                                TokenType.EOL));
+                                TokenType.Eol, (ushort)lineNum));
                             break;
                         }
                         
                         tokenList.Add(new Token(
                             tokenType, 
-                            match.Value));
+                            match.Value, 
+                            (ushort)lineNum));
                     }
                     break;
                 }
             }
         }
-        
+
+        lineNum++;
         tokenList.Add(new Token(
-            TokenType.EOL));
+            TokenType.Eol, (ushort)lineNum));
         
         tokens = tokenList.ToArray();
     }

@@ -2,5 +2,5 @@
 
 public class VariableDeclearationNode
 {
-    
+    public string VariableName { get; set; }
 }
