@@ -8,11 +8,9 @@ public class UnaryExpressionNode : AstNode
     {
         Boolean = boolean;
     }
-
-    public UnaryExpressionNode()
-    {
-        
-    }
+    
+    // i have a system that waits for a bool
+    public UnaryExpressionNode() {}
     
     public override object Visit()
     {
