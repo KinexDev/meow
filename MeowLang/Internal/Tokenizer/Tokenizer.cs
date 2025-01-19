@@ -11,15 +11,16 @@ public static class Tokenizer
     {
         List<Token> tokenList = new List<Token>();
 
+        // i used chatgpt to make the regex for this lol
         string pattern = @"(?<Number>\d+(\.\d+)?)" +
                          @"|(?<Comment>//.*?(?:\r?\n|$))" +
                          @"|(?<Operator>[+\-*|/]|and|or|not)" + 
                          @"|(?<Keyword>if|function|while|null|true|false)" +
                          @"|(?<Bracket>[()])" +
                          @"|(?<Terminator>[;])" +
-                         @"|(?<Punctuation>[{}.,;:])" +  // Fixed the extra parentheses
-                         @"|(?<Identifier>[a-zA-Z_]\w*)" +  // Identifiers must start with a letter or underscore, followed by alphanumeric characters
-                         @"|(?<String>""[^""]*"")" +  // Fixed string capture (escaped quotes properly)
+                         @"|(?<Punctuation>[{}.,;:])" +
+                         @"|(?<Identifier>[a-zA-Z_]\w*)" +
+                         @"|(?<String>""[^""]*"")" +
                          @"|(?<EOL>\n)";
 
         

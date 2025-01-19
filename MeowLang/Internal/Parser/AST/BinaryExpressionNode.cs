@@ -16,34 +16,23 @@ public class BinaryExpressionNode : AstNode
 
     public override object Visit()
     {
-        return Evaluate(this);
-    }
-
-    private object Evaluate(AstNode node)
-    { 
-        if (node is BinaryExpressionNode binaryNode)
+        object leftValue = Left.Visit();
+        object rightValue = Right.Visit();
+        
+        if (leftValue is float litLVar && rightValue is float litRVar)
         {
-            object leftValue = Evaluate(binaryNode.Left);
-            
-            object rightValue = Evaluate(binaryNode.Right);
-            if (leftValue is float litLVar && rightValue is float litRVar)
-            {
-                return EvaluateNumber(binaryNode.Expression, litLVar, litRVar);
-            } else if (leftValue is string || rightValue is string)
-            {
-                return EvaluateStrings(binaryNode.Expression, leftValue, rightValue);
-            } else if (leftValue is bool boolLVar && rightValue is bool boolRVar)
-            {
-                return EvaluateBools(binaryNode.Expression, boolLVar, boolRVar);
-            }
-        }
-        else
+            return EvaluateNumber(Expression, litLVar, litRVar);
+        } else if (leftValue is string || rightValue is string)
         {
-            return Parser.Evaluate(node);
+            return EvaluateStrings(Expression, leftValue, rightValue);
+        } else if (leftValue is bool boolLVar && rightValue is bool boolRVar)
+        {
+            return EvaluateBools(Expression, boolLVar, boolRVar);
         }
-        throw new Exception($"Unsupported node type: {node.GetType()}");
-    }
 
+        return null;
+    }
+    
     public override string ToString()
     {
         return $"({Left.ToString()} {Expression} {Right.ToString()})";
