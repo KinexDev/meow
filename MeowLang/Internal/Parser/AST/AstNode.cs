@@ -2,4 +2,8 @@
 
 public class AstNode
 {
+    public virtual object Visit()
+    {
+        throw new NotImplementedException();
+    }
 }

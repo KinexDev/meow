@@ -8,4 +8,9 @@ public class LiteralNode : AstNode
     {
         Literal = literal;
     }
+
+    public override string ToString()
+    {
+        return Literal.ToString();
+    }
 }

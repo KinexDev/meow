@@ -13,14 +13,14 @@ public static class Tokenizer
 
         string pattern = @"(?<Number>\d+(\.\d+)?)" +
                          @"|(?<Comment>//.*?(?:\r?\n|$))" +
-                         @"|(?<Operator>[+\-*|/])" +
-                         "|(?<Keyword>if|function|while|null)" +
-                         "|(?<Bracket>[()])" +
-                         "|(?<Terminator>[;])" +
-                         "|(?<Punctuation>[(){}.,;:])" +
-                         @"|(?<Identifier>\b\w+\b)" +
-                         """|(?<String>"[^"]*")""" +
-                         "|(?<EOL>\n)";
+                         @"|(?<Operator>[+\-*|/]|and|or|not)" + 
+                         @"|(?<Keyword>if|function|while|null|true|false)" +
+                         @"|(?<Bracket>[()])" +
+                         @"|(?<Terminator>[;])" +
+                         @"|(?<Punctuation>[{}.,;:])" +  // Fixed the extra parentheses
+                         @"|(?<Identifier>[a-zA-Z_]\w*)" +  // Identifiers must start with a letter or underscore, followed by alphanumeric characters
+                         @"|(?<String>""[^""]*"")" +  // Fixed string capture (escaped quotes properly)
+                         @"|(?<EOL>\n)";
 
         
         int lineNum = 0;
@@ -42,7 +42,15 @@ public static class Tokenizer
                                 TokenType.Eol, (ushort)lineNum));
                             break;
                         }
-                        
+
+                        if (tokenType == TokenType.String)
+                        {
+                            tokenList.Add(new Token(
+                                tokenType, 
+                                match.Value.Substring(1, match.Value.Length - 2), 
+                                (ushort)lineNum));    
+                            break;
+                        }
                         tokenList.Add(new Token(
                             tokenType, 
                             match.Value, 

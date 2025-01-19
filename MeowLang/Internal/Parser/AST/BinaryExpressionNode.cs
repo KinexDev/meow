@@ -3,6 +3,7 @@
 public class BinaryExpressionNode : AstNode
 {
     public string Expression;
+    public bool InBracket;
     public AstNode Left;
     public AstNode Right;
 
@@ -12,37 +13,89 @@ public class BinaryExpressionNode : AstNode
         Left = left;
         Right = right;
     }
-    
-    public object Evaluate(AstNode node)
+
+    public override object Visit()
     {
-        if (node is LiteralNode numberNode)
+        return Evaluate(this);
+    }
+
+    private object Evaluate(AstNode node)
+    {
+        if (node is LiteralNode literalNode)
         {
-            return numberNode.Literal;
-        }
-            
-        if (node is BinaryExpressionNode binaryNode)
+            return literalNode.Literal;
+        } 
+        else if (node is BinaryExpressionNode binaryNode)
         {
             object leftValue = Evaluate(binaryNode.Left);
-            object rightValue = Evaluate(binaryNode.Right);
             
-            if (leftValue is float lvar && rightValue is float rvar)
+            object rightValue = Evaluate(binaryNode.Right);
+            if (leftValue is float litLVar && rightValue is float litRVar)
             {
-                switch (binaryNode.Expression)
-                {
-                    case "+":
-                        return lvar + rvar;
-                    case "-":
-                        return lvar - rvar;
-                    case "*":
-                        return lvar * rvar;
-                    case "/":
-                        return lvar / rvar;
-                    default:
-                        throw new InvalidOperationException($"Unsupported operator: {binaryNode.Expression}");
-                }   
+                return EvaluateNumber(binaryNode.Expression, litLVar, litRVar);
+            } else if (leftValue is string || rightValue is string)
+            {
+                return EvaluateStrings(binaryNode.Expression, leftValue, rightValue);
+            } else if (leftValue is bool boolLVar && rightValue is bool boolRVar)
+            {
+                Console.WriteLine(binaryNode.Expression);
+                return EvaluateBools(binaryNode.Expression, boolLVar, boolRVar);
             }
+        } else if (node is BooleanNode booleanNode)
+        {
+            return booleanNode.Boolean;
+        } else if (node is UnaryExpressionNode unaryNode)
+        {
+            return unaryNode.Visit();
         }
             
         throw new Exception($"Unsupported node type: {node.GetType()}");
+    }
+
+    public override string ToString()
+    {
+        return $"({Left.ToString()} {Expression} {Right.ToString()})";
+    }
+
+    private float EvaluateNumber(string expression, float lvar, float rvar)
+    {
+        Console.WriteLine($"Evaluating {lvar} {expression} {rvar}");
+        switch (expression)
+        {
+            case "+":
+                return lvar + rvar;
+            case "-":
+                return lvar - rvar;
+            case "*":
+                return lvar * rvar;
+            case "/":
+                return lvar / rvar;
+            default:
+                throw new InvalidOperationException($"Unsupported operator: {expression}");
+        }   
+    }
+    // only allow for concatenation 
+    private string EvaluateStrings(string expression, object lvar, object rvar)
+    {
+        switch (expression)
+        {
+            case "+" or "..":
+                return lvar.ToString() + rvar.ToString();
+            default:
+                throw new InvalidOperationException($"Unsupported operator: {expression}");
+        }   
+    }
+
+    private bool EvaluateBools(string expression, bool lvar, bool rvar)
+    {
+        switch (expression)
+        {
+            case "and":
+                return lvar && rvar;
+            case "or":
+                return lvar || rvar;
+            default:
+                throw new InvalidOperationException($"Unsupported operator: {expression}");
+        }   
     }
 }
