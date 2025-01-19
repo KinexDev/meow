@@ -8,4 +8,9 @@ public class StringNode : AstNode
     {
         String = str;
     }
+
+    public override object Visit()
+    {
+        return String;
+    }
 }

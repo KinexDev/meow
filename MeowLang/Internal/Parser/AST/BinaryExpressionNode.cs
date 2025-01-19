@@ -20,12 +20,8 @@ public class BinaryExpressionNode : AstNode
     }
 
     private object Evaluate(AstNode node)
-    {
-        if (node is LiteralNode literalNode)
-        {
-            return literalNode.Literal;
-        } 
-        else if (node is BinaryExpressionNode binaryNode)
+    { 
+        if (node is BinaryExpressionNode binaryNode)
         {
             object leftValue = Evaluate(binaryNode.Left);
             
@@ -38,17 +34,13 @@ public class BinaryExpressionNode : AstNode
                 return EvaluateStrings(binaryNode.Expression, leftValue, rightValue);
             } else if (leftValue is bool boolLVar && rightValue is bool boolRVar)
             {
-                Console.WriteLine(binaryNode.Expression);
                 return EvaluateBools(binaryNode.Expression, boolLVar, boolRVar);
             }
-        } else if (node is BooleanNode booleanNode)
-        {
-            return booleanNode.Boolean;
-        } else if (node is UnaryExpressionNode unaryNode)
-        {
-            return unaryNode.Visit();
         }
-            
+        else
+        {
+            return Parser.Evaluate(node);
+        }
         throw new Exception($"Unsupported node type: {node.GetType()}");
     }
 
@@ -59,7 +51,6 @@ public class BinaryExpressionNode : AstNode
 
     private float EvaluateNumber(string expression, float lvar, float rvar)
     {
-        Console.WriteLine($"Evaluating {lvar} {expression} {rvar}");
         switch (expression)
         {
             case "+":

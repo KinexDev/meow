@@ -6,4 +6,9 @@ public class AstNode
     {
         throw new NotImplementedException();
     }
+
+    public override string ToString()
+    {
+        return Visit().ToString();
+    }
 }

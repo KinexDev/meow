@@ -8,4 +8,9 @@ public class BooleanNode : AstNode
     {
         Boolean = boolean;
     }
+
+    public override object Visit()
+    {
+        return Boolean;
+    }
 }

@@ -9,8 +9,8 @@ public class LiteralNode : AstNode
         Literal = literal;
     }
 
-    public override string ToString()
+    public override object Visit()
     {
-        return Literal.ToString();
+        return Literal;
     }
 }

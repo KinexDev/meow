@@ -22,25 +22,7 @@ namespace MeowLang.Internal.Parser
         
         public static object Evaluate(AstNode node)
         {
-            if (node is LiteralNode numberNode)
-            {
-                return numberNode.Literal;
-            } else if (node is BinaryExpressionNode binaryNode)
-            {
-                return binaryNode.Visit();
-            } else if (node is BooleanNode boolNode)
-            {
-                return boolNode.Boolean;
-            } else if (node is UnaryExpressionNode unaryNode)
-            {
-                return unaryNode.Visit();
-            }
-            else if (node is StringNode stringNode)
-            {
-                return stringNode.String;
-            }
-            
-            return null;
+            return node.Visit();
         }
         
         public static AstNode Parse(Token[] tokens)
@@ -65,7 +47,18 @@ namespace MeowLang.Internal.Parser
                         }
 
                         break;
+                    case TokenType.String:
+                        StringNode stringNode = new StringNode(tokens[i].Value);
 
+                        if (nodeCurrentlyIn is BinaryExpressionNode strbinaryNode)
+                        {
+                            strbinaryNode.Right = stringNode;
+                        }
+                        else
+                        {
+                            nodeCurrentlyIn = stringNode;
+                        }
+                        break;
                     case TokenType.Operator:
                         if (i + 1 < tokens.Length)
                         {

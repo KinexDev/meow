@@ -44,6 +44,7 @@ class Program
                 }
                 
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
             }
         }
     }
