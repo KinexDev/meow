@@ -4,11 +4,11 @@ public class AstNode
 {
     public virtual object Visit()
     {
-        throw new NotImplementedException();
+        return new NullNode();
     }
 
     public override string ToString()
     {
-        return Visit().ToString();
-    }
+        return $"({GetType().Name} {Visit()})";
+    } 
 }

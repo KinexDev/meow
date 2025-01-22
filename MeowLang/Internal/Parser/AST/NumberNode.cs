@@ -1,10 +1,10 @@
 ﻿namespace MeowLang.Internal.Parser.AST;
 
-public class LiteralNode : AstNode
+public class NumberNode : AstNode
 {
     public float Literal { get; set; }
 
-    public LiteralNode(float literal)
+    public NumberNode(float literal)
     {
         Literal = literal;
     }

@@ -14,11 +14,11 @@ public static class Tokenizer
         // i used chatgpt to make the regex for this lol
         string pattern = @"(?<Number>\d+(\.\d+)?)" +
                          @"|(?<Comment>//.*?(?:\r?\n|$))" +
-                         @"|(?<Operator>[+\-*|/]|and|or|not)" + 
-                         @"|(?<Keyword>if|function|while|null|true|false)" +
+                         @"|(?<Operator>[+\-*|/]|and|or|not|==|!=|<=|>=|<|>|\.\.)" + 
+                         @"|(?<Keyword>var|if|function|while|null|true|false)" +
                          @"|(?<Bracket>[()])" +
                          @"|(?<Terminator>[;])" +
-                         @"|(?<Punctuation>[{}.,;:])" +
+                         @"|(?<Punctuation>[{}.,:])" +
                          @"|(?<Identifier>[a-zA-Z_]\w*)" +
                          @"|(?<String>""[^""]*"")" +
                          @"|(?<EOL>\n)";

@@ -25,9 +25,11 @@ namespace MeowLang.Internal.Parser
             return node.Visit();
         }
         
-        public static AstNode Parse(Token[] tokens)
+        public static ProgramAST Parse(Token[] tokens)
         {
             dispatch = new List<DispatchData>();
+            ProgramAST program = new ProgramAST();
+            
             AstNode nodeCurrentlyIn = new AstNode();
             
             for (var i = 0; i < tokens.Length; i++)
@@ -35,29 +37,12 @@ namespace MeowLang.Internal.Parser
                 switch (tokens[i].TokenType)
                 {
                     case TokenType.Number:
-                        LiteralNode numberNode = new LiteralNode(float.Parse(tokens[i].Value));
-
-                        if (nodeCurrentlyIn is BinaryExpressionNode binaryNode)
-                        {
-                            binaryNode.Right = numberNode;
-                        }
-                        else
-                        {
-                            nodeCurrentlyIn = numberNode;
-                        }
-
+                        NumberNode numberNode = new NumberNode(float.Parse(tokens[i].Value));
+                        ParseType(numberNode, ref nodeCurrentlyIn);
                         break;
                     case TokenType.String:
                         StringNode stringNode = new StringNode(tokens[i].Value);
-
-                        if (nodeCurrentlyIn is BinaryExpressionNode strbinaryNode)
-                        {
-                            strbinaryNode.Right = stringNode;
-                        }
-                        else
-                        {
-                            nodeCurrentlyIn = stringNode;
-                        }
+                        ParseType(stringNode, ref nodeCurrentlyIn);
                         break;
                     case TokenType.Operator:
                         if (i + 1 < tokens.Length)
@@ -69,7 +54,8 @@ namespace MeowLang.Internal.Parser
                                     nextToken.TokenType != TokenType.Operator && 
                                     nextToken.TokenType != TokenType.Bracket)
                                 {
-                                    throw new InterpreterException(nextToken.Line, "Invalid token for 'not' operator");
+                                    if (nextToken.Value != "not")
+                                        throw new InterpreterException(nextToken.Line, "Invalid token for 'not' operator");
                                 }
                                 
                                 UnaryExpressionNode node = new UnaryExpressionNode();
@@ -80,33 +66,9 @@ namespace MeowLang.Internal.Parser
 
                             if (tokens[i + 1].TokenType == TokenType.Number)
                             {
-                                LiteralNode nextNum = new LiteralNode(float.Parse(tokens[i + 1].Value));
-
-                                if (nodeCurrentlyIn is BinaryExpressionNode opBinaryNode)
-                                {
-                                    if (OperatorPrecedence(opBinaryNode.Expression) < OperatorPrecedence(tokens[i].Value) && !opBinaryNode.InBracket)
-                                    {
-                                        BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(tokens[i].Value, opBinaryNode.Right, nextNum);
-
-                                        opBinaryNode.Right = newBinaryNode;
-                                    
-                                        nodeCurrentlyIn = opBinaryNode;
-                                    
-                                    }
-                                    else
-                                    {
-                                        BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(tokens[i].Value, opBinaryNode, nextNum);
-                                        nodeCurrentlyIn = newBinaryNode;
-                                    }
-                                }
-                                else
-                                {
-                                    BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(tokens[i].Value, nodeCurrentlyIn, nextNum);
-
-                                    nodeCurrentlyIn = newBinaryNode;
-                                }
-
-                                i++;
+                                NumberNode nextNum = new NumberNode(float.Parse(tokens[i + 1].Value));
+                                
+                                
                             } else if (tokens[i + 1].TokenType == TokenType.Keyword)
                             {
                                 if (tokens[i + 1].Value == "false" || tokens[i + 1].Value == "true")
@@ -165,7 +127,7 @@ namespace MeowLang.Internal.Parser
                                 {
                                     if (tokens[i + 1].Value == ")")
                                     {
-                                        throw new InterpreterException(tokens[i + 1].Line, $"Expected a value after the operator near ')'");
+                                        throw new InterpreterException(tokens[i + 1].Line, $"Expected a value after the operator '{tokens[i].Value}' near ')'");
                                     }
                                     
                                     BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(tokens[i].Value, nodeCurrentlyIn, new AstNode());
@@ -178,7 +140,10 @@ namespace MeowLang.Internal.Parser
                                     continue;
                                 }
                                 
-                                throw new InterpreterException(tokens[i + 1].Line, $"Expected a value after the operator near token '{tokens[i + 1].Value}'");
+                                if (!string.IsNullOrEmpty(tokens[i + 1].Value))
+                                    throw new InterpreterException(tokens[i + 1].Line, $"Expected a value after the operator '{tokens[i].Value}' near token '{tokens[i + 1].Value}'");
+                                else
+                                    throw new InterpreterException(tokens[i + 1].Line, $"Expected a value after the operator '{tokens[i].Value}'");
                             }
                         }
                         else
@@ -289,16 +254,12 @@ namespace MeowLang.Internal.Parser
                         if (tokens[i].Value == "false" || tokens[i].Value == "true")
                         {
                             BooleanNode booleanNode = new BooleanNode(bool.Parse(tokens[i].Value));
-
-                            if (nodeCurrentlyIn is BinaryExpressionNode boolbinaryNode)
-                            {
-                                boolbinaryNode.Right = booleanNode;
-                            }
-                            else
-                            {
-                                nodeCurrentlyIn = booleanNode;
-                            }
+                            ParseType(booleanNode, ref nodeCurrentlyIn);
                         }
+                        break;
+                    case TokenType.Eol or TokenType.Terminator:
+                        program.Statements.Add(nodeCurrentlyIn);
+                        nodeCurrentlyIn = new AstNode();
                         break;
                 }
             }
@@ -309,10 +270,51 @@ namespace MeowLang.Internal.Parser
                 throw new InterpreterException(dispatch[0].Token.Line, $"Code not ended at '{dispatch[0].Token.Value}'");
             }
             
-            return nodeCurrentlyIn;
+            return program;
         }
 
+        
+        private static void ParseType(AstNode nodeType, ref AstNode nodeCurrentlyIn)
+        {
+            if (nodeCurrentlyIn is BinaryExpressionNode binaryNode)
+            {
+                binaryNode.Right = nodeType;
+            }
+            else
+            {
+                nodeCurrentlyIn = nodeType;
+            }
+        }
 
+        private static void ParseOperatorPrecedence(Token currentToken, AstNode NewNode, ref AstNode nodeCurrentlyIn, ref int i)
+        {
+            if (nodeCurrentlyIn is BinaryExpressionNode opBinaryNode)
+            {
+                if (OperatorPrecedence(opBinaryNode.Expression) < OperatorPrecedence(currentToken.Value) && !opBinaryNode.InBracket)
+                {
+                    BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(currentToken.Value, opBinaryNode.Right, NewNode);
+
+                    opBinaryNode.Right = newBinaryNode;
+                                    
+                    nodeCurrentlyIn = opBinaryNode;
+                                    
+                }
+                else
+                {
+                    BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(currentToken.Value, opBinaryNode, NewNode);
+                    nodeCurrentlyIn = newBinaryNode;
+                }
+            }
+            else
+            {
+                BinaryExpressionNode newBinaryNode = new BinaryExpressionNode(currentToken.Value, nodeCurrentlyIn, NewNode);
+
+                nodeCurrentlyIn = newBinaryNode;
+            }
+
+            i++;
+        }
+        
         private static int OperatorPrecedence(string operatorToken)
         {
             switch (operatorToken)
@@ -326,17 +328,17 @@ namespace MeowLang.Internal.Parser
                 case "/":
                     return 2;
                 case "or":
-                    return 3;
+                    return -2;
                 case "and":
-                    return 4;
+                    return -1;
                 case "not":
-                    return 5;
-                case "(":
-                    return 6;
-                case ")":
-                    return 7;
-                default:
                     return 0;
+                case "(":
+                    return 4;
+                case ")":
+                    return 5;
+                default:
+                    return 1;
             }
         }
     }

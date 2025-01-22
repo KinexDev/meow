@@ -27,7 +27,7 @@ public class UnaryExpressionNode : AstNode
         }
         else if (Boolean is UnaryExpressionNode unaryExpressionNode)
         {
-            return unaryExpressionNode.Visit();
+            return !(bool)unaryExpressionNode.Visit();
         }
         
         throw new InvalidOperationException($"Unsupported operand type for not operation: {Boolean.GetType()}");

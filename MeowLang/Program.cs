@@ -30,8 +30,10 @@ class Program
             {
                 Console.WriteLine($"-------------OUTPUT-------------");
                 var x = Parser.Parse(tokenList);
-                Console.WriteLine(x.ToString());
-                Console.WriteLine(Parser.Evaluate(x));
+                foreach (var node in x.Statements)
+                {
+                    Console.WriteLine(Parser.Evaluate(node));
+                }
             }
             catch (Exception e)
             {
@@ -42,7 +44,6 @@ class Program
                 }
                 
                 Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
             }
         }
     }
