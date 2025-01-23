@@ -2,34 +2,55 @@
 
 public class UnaryExpressionNode : AstNode
 {
-    public AstNode Boolean { get; set; }
+    public string Expression { get; set; }
+    public AstNode Operand { get; set; }
 
-    public UnaryExpressionNode(AstNode boolean)
+    public UnaryExpressionNode(string expression, AstNode operand = null)
     {
-        Boolean = boolean;
+        Expression = expression;
+        Operand = operand;
     }
-    
-    // i have a system that waits for a bool
-    public UnaryExpressionNode() {}
     
     public override object Visit()
     {
-        if (Boolean is BooleanNode booleanNode)
+        switch (Expression)
         {
-            return !booleanNode.Boolean;
-        } else if (Boolean is BinaryExpressionNode binaryExpressionNode)
-        {
-            var returnNode = binaryExpressionNode.Visit();
-            if (returnNode is bool boolean)
-            {
-                return !boolean;
-            }
-        }
-        else if (Boolean is UnaryExpressionNode unaryExpressionNode)
-        {
-            return !(bool)unaryExpressionNode.Visit();
+            case "not":
+                if (Operand is BooleanNode booleanNode)
+                {
+                    return !booleanNode.Boolean;
+                } else if (Operand is BinaryExpressionNode binaryExpressionNode)
+                {
+                    var returnNode = binaryExpressionNode.Visit();
+                    if (returnNode is bool boolean)
+                    {
+                        return !boolean;
+                    }
+                }
+                else if (Operand is UnaryExpressionNode unaryExpressionNode)
+                {
+                    return !(bool)unaryExpressionNode.Visit();
+                }       
+                break;
+            case "-":
+                if (Operand is NumberNode numberNode)
+                {
+                    return -numberNode.Literal;
+                } else if (Operand is BinaryExpressionNode binaryExpressionNode)
+                {
+                    var returnNode = binaryExpressionNode.Visit();
+                    if (returnNode is float number)
+                    {
+                        return -number;
+                    }
+                }
+                else if (Operand is UnaryExpressionNode unaryExpressionNode)
+                {
+                    return -(float)unaryExpressionNode.Visit();
+                }       
+                break;
         }
         
-        throw new InvalidOperationException($"Unsupported operand type for not operation: {Boolean.GetType()}");
+        throw new InvalidOperationException($"Unsupported operand type for '{Expression}' operation: {Operand.GetType()}");
     }
 }

@@ -21,10 +21,7 @@ public class BinaryExpressionNode : AstNode
 
         if (leftValue is NullNode)
         {
-            if (rightValue is float litLVar && Expression is "-" or "+")
-            {
-                return EvaluateNumber(Expression, 0, litLVar);
-            }
+            throw new InvalidOperationException("No left operand on binary expression found?");
         }
         else
         {

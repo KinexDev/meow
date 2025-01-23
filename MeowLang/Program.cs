@@ -19,6 +19,7 @@ class Program
         {
             Console.WriteLine($"-------------INPUT-------------");
             string? Input = Console.ReadLine();
+            Input += ";";
             Console.WriteLine($"-------------TOKENS-------------");
             Tokenizer.FindTokens(Input, out Token[] tokenList);  
             foreach (var token in tokenList)
