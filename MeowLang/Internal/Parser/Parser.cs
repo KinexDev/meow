@@ -9,14 +9,22 @@ namespace MeowLang.Internal.Parser
     {
         public class DispatchData
         {
+            public DispatchType type { get; set; }
             public Token Token;
             public AstNode value;
 
-            public DispatchData(Token token, AstNode value)
+            public DispatchData(DispatchType type, Token token, AstNode value)
             {
+                this.type = type;
                 Token = token;
                 this.value = value;
             }
+        }
+
+        public enum DispatchType
+        {
+            Brackets,
+            Unary
         }
         
         public static object Evaluate(AstNode node)
@@ -41,21 +49,23 @@ namespace MeowLang.Internal.Parser
                         {
                             var previousDispatchData = dispatch[^1];
 
-                            if (previousDispatchData.Token.TokenType == TokenType.Operator &&
-                                previousDispatchData.Token.Value == "-")
+                            if (previousDispatchData.type == DispatchType.Unary)
                             {
                                 if (nodeCurrentlyIn is UnaryExpressionNode node)
                                 {
                                     node.Operand =
                                         new NumberNode(float.Parse(tokens[i].Value));   
+                                    
+                                    nodeCurrentlyIn = previousDispatchData.value;
 
                                     ParseType(node, ref nodeCurrentlyIn);
-                                    nodeCurrentlyIn = nod;
+                                
                                     dispatch.RemoveAt(dispatch.Count - 1);
                                     continue;
                                 }
                             }
                         }
+
                         
                         NumberNode numberNode = new NumberNode(float.Parse(tokens[i].Value));
                         ParseType(numberNode, ref nodeCurrentlyIn);
@@ -76,14 +86,18 @@ namespace MeowLang.Internal.Parser
                                     nextToken.TokenType != TokenType.Operator &&
                                     nextToken.TokenType != TokenType.Bracket, ref nodeCurrentlyIn, ref dispatch);
                                 continue;
-                            } else if (tokens[i].Value == "-" && tokens[i - 1].TokenType != TokenType.Number) // - used as a unary operator e.g. '-10'
-                            {
-                                var nextToken = tokens[i + 1];
-                                ParseUnaryOperator(nextToken, tokens[i],
-                                    nextToken.TokenType != TokenType.Bracket && nextToken.TokenType != TokenType.Number, ref nodeCurrentlyIn, ref dispatch);
-                                continue;
                             }
-                            
+                            if (tokens[i].Value == "-")
+                            {
+                                if (i == 0 || (tokens[i - 1].TokenType != TokenType.Number && tokens[i - 1].Value != ")"))
+                                {
+                                    var nextToken = tokens[i + 1];
+                                    ParseUnaryOperator(nextToken, tokens[i],
+                                        nextToken.TokenType != TokenType.Bracket && nextToken.TokenType != TokenType.Number, ref nodeCurrentlyIn, ref dispatch);   
+                                    continue;
+                                }
+                            }
+
                             //binary parsing
                             if (tokens[i + 1].TokenType == TokenType.Number)
                             {
@@ -135,18 +149,22 @@ namespace MeowLang.Internal.Parser
                     case TokenType.Bracket :
                         if (tokens[i].Value == "(")
                         {
-                            dispatch.Add(new DispatchData(tokens[i], nodeCurrentlyIn));
+                            dispatch.Add(new DispatchData(DispatchType.Brackets, tokens[i], nodeCurrentlyIn));
                             nodeCurrentlyIn = new AstNode();
                         }
 
                         if (tokens[i].Value == ")")
                         {
-                            if (dispatch[^1].Token.Value == "(")
+                            if (dispatch.Count == 0)
+                                throw new InterpreterException(tokens[i].Line, "Unexpected closing bracket. No opening bracket found to match it.");
+                            if (dispatch[^1].type == DispatchType.Brackets)
                             {
                                 var bracketNode = nodeCurrentlyIn;
 
                                 if (bracketNode is BinaryExpressionNode bebracketNode)
+                                {
                                     bebracketNode.InBracket = true;
+                                }
                                 
                                 nodeCurrentlyIn = dispatch[^1].value;
                                 
@@ -164,8 +182,7 @@ namespace MeowLang.Internal.Parser
                         {
                             var previousDispatchData = dispatch[^1];
 
-                            if (previousDispatchData.Token.TokenType == TokenType.Operator &&
-                                previousDispatchData.Token.Value == "not")
+                            if (previousDispatchData.type == DispatchType.Unary)
                             {
                                 if ((tokens[i].Value == "false" || tokens[i].Value == "true") &&
                                     nodeCurrentlyIn is UnaryExpressionNode node)
@@ -226,7 +243,7 @@ namespace MeowLang.Internal.Parser
             }
             
             UnaryExpressionNode node = new UnaryExpressionNode(currentToken.Value);
-            dispatch.Add(new DispatchData(currentToken, nodeCurrentlyIn));
+            dispatch.Add(new DispatchData(DispatchType.Unary, currentToken, nodeCurrentlyIn));
             nodeCurrentlyIn = node;
         }
         
@@ -261,9 +278,13 @@ namespace MeowLang.Internal.Parser
             }
             else if (nodeCurrentlyIn is UnaryExpressionNode unaryNode)
             {
-                Console.WriteLine("Oopsp");
                 unaryNode.Operand = bracketNode;
                 dispatch.RemoveAt(dispatch.Count - 1);
+                // well unarys also use dispatch, so saafe to assume to go through and get the unary correctly. and so we will check just rq because then essentially we are scrapping the entire thing we just built.
+                var oldNode = dispatch[^1].value;
+                ParseBrackets(unaryNode, ref oldNode, ref dispatch);
+                
+                nodeCurrentlyIn = oldNode;
             }
             else if (nodeCurrentlyIn.GetType() == typeof(AstNode))
             {
